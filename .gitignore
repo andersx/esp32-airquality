@@ -1,32 +1,41 @@
-# Prerequisites
+# Arduino compiled files
+*.hex
+*.elf
+*.bin
+*.eep
+
+# Arduino build and cache folders
+build/
 *.d
-
-# Compiled Object files
-*.slo
-*.lo
+*.dep
 *.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
 *.a
-*.lib
+*.lst
 
-# Executables
-*.exe
-*.out
-*.app
+# Arduino IDE backup files
+*.bak
+
+# Arduino IDE metadata
+*.sdf
+*.opensdf
+*.suo
+*.user
+*.userprefs
+*.pro.user
+*.vcxproj*
+*.cproject
+*.project
+*.idea/
+
+# macOS metadata
+.DS_Store
+
+# Windows metadata
+Thumbs.db
+
+# PlatformIO (if used)
+.pio/
+.vscode/
+
+# Never include secrets files
+arduino_secrets.h
