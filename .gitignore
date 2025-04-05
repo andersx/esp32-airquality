@@ -36,3 +36,6 @@ Thumbs.db
 # PlatformIO (if used)
 .pio/
 .vscode/
+
+# Never include secrets files
+arduino_secrets.h
