@@ -39,3 +39,4 @@ Thumbs.db
 
 # Never include secrets files
 arduino_secrets.h
+auxiliary.h
