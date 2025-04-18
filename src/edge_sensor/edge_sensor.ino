@@ -303,7 +303,7 @@ void loop() {
   update_display(pm2_5);
 
   // Check that readings are valid, if any are negative then bail out
-  if ((pm1_0 > -1) || (pm2_5 > -1) || (pm10 > -1)) {
+  if ((pm1_0 > -1) && (pm2_5 > -1) && (pm10 > -1)) {
 
     // Assemble payload
     if (current_time_seconds - last_upload_time >= INFLUXDB_UPLOAD_INTERVAL) {
