@@ -38,24 +38,24 @@ void connect_wifimanager() {
   lcd.print("Connecting WiFi ");
   lcd.setCursor(0, 1);
   lcd.print("                ");
-  
+
   WiFi.mode(WIFI_STA);
 
   WiFiManager wifi_manager;
-  
+
   // Reset ESP32 WiFi netowrks ncomment this for testing
   // wifi_manager.resetSettings();
-  
+
   // Reboot after 5 minutes if still no connection
   wifi_manager.setConfigPortalTimeout(300);
-  
+
   bool success = wifi_manager.autoConnect("AirSensorSetup");  // anonymous ap
 
   if (!success) {
     Serial.println("❌ Failed to connect");
     lcd.setCursor(0, 1);  // bottom row
     lcd.print("NO WIFI - REBOOT");
-    
+
     // Maybe reset wifi settings if WiFi fails.
     // Will require user to log in again,
     // Let's disable for now
@@ -65,7 +65,7 @@ void connect_wifimanager() {
     ESP.restart();
 
   } else {
-    // yeey! 
+    // yeey!
     Serial.println("connected...yeey :)");
   }
 
@@ -73,7 +73,6 @@ void connect_wifimanager() {
   lcd.print("            ");
   lcd.setCursor(0, 1);  // bottom row
   lcd.print(WiFi.localIP());
-
 }
 
 // Get time from NPT server - time is needed for InfluxDB uploads
@@ -93,7 +92,7 @@ void set_time() {
     Serial.print(".");
   }
   Serial.println(" Got time!");
-  
+
   time_t ts = time(nullptr);
   // 16  chars are not enough for "YYYY-MM-DD HH:MM" for some reason?
   char time_buffer[17];
@@ -102,12 +101,11 @@ void set_time() {
 
   lcd.setCursor(0, 1);
   lcd.print(time_buffer);
-
 }
 
 // Upload payload
 void upload_to_influx(String payload) {
-  
+
   lcd.setCursor(0, 0);
   lcd.print("Uploading values");
   lcd.setCursor(0, 1);
@@ -127,7 +125,7 @@ void upload_to_influx(String payload) {
   client->setCACert(INFLUXDB_ROOT_CA);  // ✅ validate server cert
 
   HTTPClient http;
-  
+
   Serial.println("Uploading test data to InfluxDB:");
   Serial.println("URL: " + INFLUXDB_URL);
 
@@ -163,7 +161,7 @@ void upload_to_influx(String payload) {
   delete client;
 }
 
-void init_pmsx003_sensor(){
+void init_pmsx003_sensor() {
   lcd.setCursor(0, 0);
   lcd.print("Starting PMSx003");
   lcd.setCursor(0, 1);
@@ -176,7 +174,6 @@ void init_pmsx003_sensor(){
   Serial.println("PMS sensor initialized on Serial2");
   lcd.setCursor(0, 1);
   lcd.print("Sensor ready!   ");
-
 }
 
 const char* classify_pm2_5(int pm2_5) {
@@ -203,7 +200,7 @@ void init_lcd_with_greeting() {
   // Turn on LCD backlight
   lcd.init();
   lcd.backlight();
-  
+
   // Display greetings!
   lcd.setCursor(0, 0);
   lcd.print("Booting ESP32   ");
@@ -223,7 +220,7 @@ void setup() {
 
   Serial.begin(115200);
   delay(1000);
-  
+
   init_pmsx003_sensor();
   delay(1000);
 
@@ -287,9 +284,8 @@ void loop() {
 
   if (pms.status == OK) {
     Serial.printf(
-      "PM1.0: %d, PM2.5: %d, PM10: %d [µg/m3]\n", 
-      pms.pm01, pms.pm25, pms.pm10
-    );
+      "PM1.0: %d, PM2.5: %d, PM10: %d [µg/m3]\n",
+      pms.pm01, pms.pm25, pms.pm10);
 
     pm1_0 = pms.pm01;
     pm2_5 = pms.pm25;
@@ -312,13 +308,10 @@ void loop() {
     // Assemble payload
     if (current_time_seconds - last_upload_time >= INFLUXDB_UPLOAD_INTERVAL) {
 
-      String payload = SENSOR_NAME + 
-        " pm1_0=" + String(pm1_0) + 
-        ",pm2_5=" + String(pm2_5) + 
-        ",pm10=" +  String(pm10) + " " + String(time_stamp);
+      String payload = SENSOR_NAME + " pm1_0=" + String(pm1_0) + ",pm2_5=" + String(pm2_5) + ",pm10=" + String(pm10) + " " + String(time_stamp);
       Serial.println("Payload: " + payload);
       Serial.println("Uploading to InfluxDB:");
-      
+
       upload_to_influx(payload);
       last_upload_time = current_time_seconds;
       Serial.println("Done uploading to InfluxDB.");
@@ -331,5 +324,4 @@ void loop() {
   Serial.print("Next upload in ");
   Serial.print(INFLUXDB_UPLOAD_INTERVAL - (current_time_seconds - last_upload_time));
   Serial.println(" seconds");
-
 }
